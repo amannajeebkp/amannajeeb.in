@@ -132,15 +132,15 @@ function ParticleFigure() {
       pos[ix + 2] += vel[ix + 2];
     }
 
-    if (geoRef.current) {
+    if (geoRef.current?.attributes?.position) {
       geoRef.current.attributes.position.needsUpdate = true;
     }
   });
 
   return (
     <group ref={group}>
-      <points ref={geoRef} frustumCulled={false}>
-        <bufferGeometry>
+      <points frustumCulled={false}>
+        <bufferGeometry ref={geoRef}>
           <bufferAttribute attach="attributes-position" args={[pos, 3]} />
         </bufferGeometry>
         <pointsMaterial

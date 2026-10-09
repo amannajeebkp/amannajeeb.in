@@ -7,10 +7,11 @@ export default defineConfig({
     target: "es2022",
     rollupOptions: {
       output: {
-        manualChunks: {
-          three: ["three"],
-          r3f: ["@react-three/fiber", "@react-three/drei"],
-          gsap: ["gsap"],
+        manualChunks(id: string) {
+          if (id.includes("node_modules/three")) return "three";
+          if (id.includes("@react-three")) return "r3f";
+          if (id.includes("node_modules/gsap")) return "gsap";
+          return undefined;
         },
       },
     },

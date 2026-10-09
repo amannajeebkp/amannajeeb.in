@@ -53,7 +53,7 @@ export default function Effects() {
   const { composer, bloom, lens } = useMemo(() => {
     const composer = new EffectComposer(gl);
     composer.addPass(new RenderPass(scene, camera));
-    const bloom = new UnrealBloomPass(new THREE.Vector2(size.width, size.height), isLowPower ? 0.9 : 1.25, 0.55, 0.18);
+    const bloom = new UnrealBloomPass(new THREE.Vector2(size.width, size.height), isLowPower ? 0.7 : 0.95, 0.45, 0.42);
     composer.addPass(bloom);
     const lens = new ShaderPass(LensShader);
     composer.addPass(lens);

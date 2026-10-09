@@ -17,8 +17,8 @@ import { isLowPower, pointer, prefersReducedMotion, scroll, tickPointer, tickScr
  */
 const PATH = new THREE.CatmullRomCurve3(
   [
-    new THREE.Vector3(0, 0, 9.5),
-    new THREE.Vector3(0.4, 0.2, 4),
+    new THREE.Vector3(-2.2, 0.1, 9.5),
+    new THREE.Vector3(-0.6, 0.2, 4.5),
     new THREE.Vector3(0, 0, -2),
     new THREE.Vector3(-1.2, 0.6, -9),
     new THREE.Vector3(1.4, -0.4, -16),
@@ -30,6 +30,8 @@ const PATH = new THREE.CatmullRomCurve3(
   0.4,
 );
 const CORE_POS = new THREE.Vector3(0, 0, -36);
+// looking slightly right of the mind keeps it clear of the hero type on the left
+const MIND_LOOK = new THREE.Vector3(1.6, 0.1, 0);
 
 function CameraRig() {
   const { camera } = useThree();
@@ -53,7 +55,7 @@ function CameraRig() {
     look.copy(ahead).lerp(CORE_POS, lockCore);
     // early on, the subject is the mind itself at the origin
     const lookMind = 1 - THREE.MathUtils.smoothstep(p, 0.0, 0.3);
-    look.lerp(new THREE.Vector3(0, 0, 0), lookMind * 0.9);
+    look.lerp(MIND_LOOK, lookMind * 0.9);
     camera.lookAt(look);
     // subtle roll with lateral pointer
     camera.rotation.z = -pointer.sx * 0.02;
@@ -100,20 +102,20 @@ export default function Scene() {
     <div className="scene" aria-hidden="true">
       <Canvas
         dpr={low ? [1, 1.25] : [1, 2]}
-        camera={{ fov: 55, near: 0.1, far: 120, position: [0, 0, 9.5] }}
+        camera={{ fov: 55, near: 0.1, far: 120, position: [-2.2, 0.1, 9.5] }}
         gl={{ antialias: false, powerPreference: "high-performance", alpha: false }}
         frameloop={prefersReducedMotion ? "demand" : "always"}
         onCreated={({ gl }) => {
           gl.setClearColor("#050507", 1);
           gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.1;
+          gl.toneMappingExposure = 1.0;
         }}
       >
         <color attach="background" args={["#050507"]} />
         <fog attach="fog" args={["#050507", 18, 60]} />
         <Suspense fallback={null}>
           <CameraRig />
-          <NeuralField count={low ? 1400 : 2600} />
+          <NeuralField count={low ? 1200 : 2000} />
           <DataStream count={low ? 2200 : 5200} />
           <Beacons />
           <Core position={[CORE_POS.x, CORE_POS.y, CORE_POS.z]} />

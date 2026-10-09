@@ -27,8 +27,8 @@ void main() {
   // signal: a wave sweeping around the sphere
   float wave = sin(uTime * 1.4 - atan(position.y, position.x) * 2.0 + position.z * 1.2);
   vPulse = smoothstep(0.75, 1.0, wave);
-  float size = (2.2 + vPulse * 4.0 + step(0.985, aSeed) * 3.0) * uPixelRatio;
-  gl_PointSize = size * (34.0 / -mv.z);
+  float size = (1.1 + vPulse * 2.2 + step(0.985, aSeed) * 1.8) * uPixelRatio;
+  gl_PointSize = size * (30.0 / -mv.z);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -41,10 +41,10 @@ varying float vPulse;
 void main() {
   vec2 c = gl_PointCoord - 0.5;
   float d = length(c);
-  float core = smoothstep(0.5, 0.05, d);
-  float halo = smoothstep(0.5, 0.0, d) * 0.35;
-  vec3 col = mix(uColorA, uColorB, vSeed) + vPulse * 0.9;
-  float a = core + halo;
+  float core = smoothstep(0.5, 0.08, d);
+  float halo = smoothstep(0.5, 0.0, d) * 0.18;
+  vec3 col = mix(uColorA, uColorB, vSeed) * 0.75 + vPulse * 0.6;
+  float a = (core + halo) * 0.85;
   gl_FragColor = vec4(col * a, a);
 }
 `;
@@ -68,8 +68,8 @@ varying float vPhase;
 varying float vT;
 void main() {
   float signal = smoothstep(0.6, 1.0, sin(vT * 2.0 + vPhase * 12.566));
-  float a = 0.07 + signal * 0.35;
-  gl_FragColor = vec4(uColor * (0.6 + signal), a);
+  float a = 0.05 + signal * 0.3;
+  gl_FragColor = vec4(uColor * (0.5 + signal * 0.8), a);
 }
 `;
 

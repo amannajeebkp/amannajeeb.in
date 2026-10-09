@@ -33,6 +33,10 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .scene { position: fixed; inset: 0; z-index: 0; }
 .scene canvas { display: block; width: 100% !important; height: 100% !important; }
 .content { position: relative; z-index: 1; }
+/* legibility veil: darkens the left where the words live, leaves the right open for the scene */
+.veil { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(5,5,7,.86) 0%, rgba(5,5,7,.55) 42%, rgba(5,5,7,0) 72%); }
+@media (max-width: 720px) { .veil { background: linear-gradient(180deg, rgba(5,5,7,.2) 0%, rgba(5,5,7,.72) 60%, rgba(5,5,7,.85) 100%); } }
 
 /* ---------- loader ---------- */
 .loader {

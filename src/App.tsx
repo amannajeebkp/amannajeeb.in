@@ -20,6 +20,7 @@ export default function App() {
   return (
     <>
       <Scene />
+      <div className="veil" aria-hidden="true" />
       <Sections ready={ready} />
       <Cursor />
       {!ready && <Loader onDone={onDone} />}

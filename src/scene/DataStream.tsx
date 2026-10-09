@@ -29,7 +29,7 @@ void main() {
   p.xy = mat2(c, -s, s, c) * p.xy;
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   vDepth = -mv.z;
-  gl_PointSize = (1.4 + aSeed * 2.2) * uPixelRatio * (40.0 / max(1.0, -mv.z));
+  gl_PointSize = min(9.0 * uPixelRatio, (1.2 + aSeed * 2.0) * uPixelRatio * (40.0 / max(1.0, -mv.z)));
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -46,9 +46,9 @@ void main() {
   c.y /= (1.0 + uStretch * 3.0);
   float d = length(c);
   float a = smoothstep(0.5, 0.0, d);
-  float fade = smoothstep(0.5, 6.0, vDepth) * smoothstep(60.0, 20.0, vDepth);
+  float fade = smoothstep(1.5, 9.0, vDepth) * smoothstep(60.0, 20.0, vDepth);
   vec3 col = mix(uColorA, uColorB, vSeed);
-  gl_FragColor = vec4(col * a * fade, a * fade * 0.9);
+  gl_FragColor = vec4(col * a * fade * 0.7, a * fade * 0.7);
 }
 `;
 
@@ -58,7 +58,7 @@ export default function DataStream({ count = 5000, length = 48, radius = 7 }: { 
     const seed = new Float32Array(count);
     for (let i = 0; i < count; i++) {
       // hollow-ish cylinder so the centre stays clear for the content
-      const r = radius * (0.35 + Math.pow(Math.random(), 0.6) * 0.65);
+      const r = radius * (0.5 + Math.pow(Math.random(), 0.6) * 0.5);
       const a = Math.random() * Math.PI * 2;
       pos[i * 3] = Math.cos(a) * r;
       pos[i * 3 + 1] = Math.sin(a) * r;

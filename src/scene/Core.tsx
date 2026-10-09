@@ -51,6 +51,7 @@ void main() {
 `;
 
 export default function Core({ position = [0, 0, -36] as [number, number, number] }) {
+  const group = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.Mesh>(null);
   const ringA = useRef<THREE.Mesh>(null);
   const ringB = useRef<THREE.Mesh>(null);
@@ -69,6 +70,8 @@ export default function Core({ position = [0, 0, -36] as [number, number, number
     uniforms.uTime.value = t;
     const awake = THREE.MathUtils.smoothstep(scroll.smooth, 0.74, 0.96);
     uniforms.uAwake.value += (awake - uniforms.uAwake.value) * 0.05;
+    // stays hidden until the corridor opens, so it never peeks through the mind
+    if (group.current) group.current.visible = scroll.smooth > 0.45;
     if (mesh.current) {
       mesh.current.rotation.y = t * 0.12;
       mesh.current.scale.setScalar(1 + Math.sin(t * 1.3) * 0.02 * uniforms.uAwake.value);
@@ -78,7 +81,7 @@ export default function Core({ position = [0, 0, -36] as [number, number, number
   });
 
   return (
-    <group position={position}>
+    <group ref={group} position={position} visible={false}>
       <mesh ref={mesh}>
         <icosahedronGeometry args={[1.6, 48]} />
         <shaderMaterial vertexShader={VERT} fragmentShader={FRAG} uniforms={uniforms} />

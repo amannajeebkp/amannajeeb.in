@@ -1,0 +1,86 @@
+[
+ {
+ "id": "ht-001",
+ "content": "Ship it before it's perfect.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+{
+ "id": "ht-002",
+ "content": "Code is read more than it's written.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-003",
+ "content": "If it's not tested, it's broken.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-004",
+ "content": "Simplicity is the ultimate sophistication.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-005",
+ "content": "The best code is no code at all.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-006",
+ "content": "Premature optimization is the root of all evil.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-007",
+ "content": "First, solve the problem. Then, write the code.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-008",
+ "content": "Talk is cheap. Show me the code.",
+ "category": "hat",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-009",
+ "content": "Any fool can write code that a computer can understand.",
+ "category": "dog",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-010",
+ "content": "Good programmers know what to write.",
+ "category": "dog",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-011",
+ "content": "The only way to go fast is to go well.",
+ "category": "dog",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-012",
+ "content": "Make it work, make it right, make it fast.",
+ "category": "dog",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-013",
+ "content": "Clean code always looks like it was written by someone who cares.",
+ "category": "dog",
+ "created_at": "2026-08-28T00:00:00.000Z"
+},
+ {
+ "id": "ht-014",
+ "content": "Programming is not about typing, it's about thinking.",
+ "category": "dog",
+ "created_at": "2026-08-28T00:00:00.000Z"
+}
+]

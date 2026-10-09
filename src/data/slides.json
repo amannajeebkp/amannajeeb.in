@@ -1,0 +1,91 @@
+[
+ {
+  "slug": "nj-home",
+  "title": "NJ's Home",
+  "type": "text",
+  "order": 1,
+  "content": {
+   "text": "Hey, I'm NJ. Welcome to my corner of the internet.",
+   "headline": "AI Engineer. Builder. Creator.",
+   "top_label": "NJ's Home",
+   "bottom_label": "Building the future with AI",
+   "center_letter": ""
+  },
+  "is_visible": true,
+  "button_text": "Learn more",
+  "button_link": "https://linkedin.com/in/amannajeebkp",
+  "id": "slide-001",
+  "created_at": "2026-08-28T00:00:00.000Z",
+  "updated_at": "2026-08-28T00:00:00.000Z"
+ },
+ {
+  "slug": "what-i-do",
+  "title": "What I Do",
+  "type": "text",
+  "order": 2,
+  "content": {
+   "text": "I build intelligent systems that ship.\n– Fine-tune LLMs\n– Deploy production ML pipelines\n– Turn research into products\n– Ship fast, break nothing"
+  },
+  "is_visible": true,
+  "button_text": null,
+  "button_link": null,
+  "id": "slide-002",
+  "created_at": "2026-08-28T00:00:00.000Z",
+  "updated_at": "2026-08-28T00:00:00.000Z"
+ },
+ {
+  "slug": "skills",
+  "title": "Skills",
+  "type": "text",
+  "order": 3,
+  "content": {
+   "text": "Tech stack I work with:\n– Python, TypeScript, React\n– PyTorch, TensorFlow, scikit-learn\n– LangChain, RAG, Vector DBs\n– FastAPI, Docker, AWS"
+  },
+  "is_visible": true,
+  "button_text": null,
+  "button_link": null,
+  "id": "slide-003",
+  "created_at": "2026-08-28T00:00:00.000Z",
+  "updated_at": "2026-08-28T00:00:00.000Z"
+ },
+ {
+  "slug": "projects",
+  "title": "Projects",
+  "type": "text",
+  "order": 4,
+  "content": {
+   "text": "Things I've built:\n– RAG assistants for enterprises\n– Real-time defect detection\n– LLM ops platforms\n– Speech intelligence APIs"
+  },
+  "is_visible": true,
+  "button_text": null,
+  "button_link": null,
+  "id": "slide-004",
+  "created_at": "2026-08-28T00:00:00.000Z",
+  "updated_at": "2026-08-28T00:00:00.000Z"
+ },
+ {
+  "slug": "contact",
+  "title": "Contact",
+  "type": "text",
+  "order": 5,
+  "content": {
+   "text": "Let's build something together.",
+   "details": [
+    {
+     "label": "EMAIL",
+     "value": "HELLO@AMANNAJEEB.IN"
+    }
+   ],
+   "headline": "Get in touch",
+   "top_label": "Contact",
+   "button_text": "Send me an email",
+   "bottom_label": ""
+  },
+  "is_visible": true,
+  "button_text": "Email me",
+  "button_link": "mailto:hello@amannajeeb.in",
+  "id": "slide-005",
+  "created_at": "2026-08-28T00:00:00.000Z",
+  "updated_at": "2026-08-28T00:00:00.000Z"
+ }
+]

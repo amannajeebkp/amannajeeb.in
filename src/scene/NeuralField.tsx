@@ -73,17 +73,29 @@ void main() {
 }
 `;
 
+/** Shell of nodes plus a sparser interior, so it reads as a volume, not a hollow globe. */
 function fibonacciSphere(n: number, radius: number) {
+  const shell = Math.floor(n * 0.62);
   const pts = new Float32Array(n * 3);
   const golden = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < n; i++) {
-    const y = 1 - (i / (n - 1)) * 2;
+  for (let i = 0; i < shell; i++) {
+    const y = 1 - (i / (shell - 1)) * 2;
     const r = Math.sqrt(1 - y * y);
     const th = golden * i;
     // tiny radial noise so it reads as organic, not a globe
     const rr = radius * (0.92 + Math.random() * 0.16);
     pts[i * 3] = Math.cos(th) * r * rr;
     pts[i * 3 + 1] = y * rr;
+    pts[i * 3 + 2] = Math.sin(th) * r * rr;
+  }
+  for (let i = shell; i < n; i++) {
+    // uniform in volume: r ∝ cbrt(u)
+    const rr = radius * 0.88 * Math.cbrt(Math.random());
+    const u = Math.random() * 2 - 1;
+    const th = Math.random() * Math.PI * 2;
+    const r = Math.sqrt(1 - u * u);
+    pts[i * 3] = Math.cos(th) * r * rr;
+    pts[i * 3 + 1] = u * rr;
     pts[i * 3 + 2] = Math.sin(th) * r * rr;
   }
   return pts;

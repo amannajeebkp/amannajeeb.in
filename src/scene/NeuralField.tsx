@@ -43,7 +43,7 @@ void main() {
   float d = length(c);
   float core = smoothstep(0.5, 0.08, d);
   float halo = smoothstep(0.5, 0.0, d) * 0.18;
-  vec3 col = mix(uColorA, uColorB, vSeed) * 0.75 + vPulse * 0.6;
+  vec3 col = mix(uColorA, uColorB, vSeed) * 0.9 + vPulse * 0.7;
   float a = (core + halo) * 0.85;
   gl_FragColor = vec4(col * a, a);
 }

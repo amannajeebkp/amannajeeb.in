@@ -17,8 +17,8 @@ import { isLowPower, pointer, prefersReducedMotion, scroll, tickPointer, tickScr
  */
 const PATH = new THREE.CatmullRomCurve3(
   [
-    new THREE.Vector3(-2.8, 0.1, 9.5),
-    new THREE.Vector3(-0.8, 0.2, 4.5),
+    new THREE.Vector3(-1.2, 0.1, 9.5),
+    new THREE.Vector3(-0.4, 0.2, 4.5),
     new THREE.Vector3(0, 0, -2),
     new THREE.Vector3(-1.2, 0.6, -9),
     new THREE.Vector3(1.4, -0.4, -16),
@@ -30,8 +30,8 @@ const PATH = new THREE.CatmullRomCurve3(
   0.4,
 );
 const CORE_POS = new THREE.Vector3(3.4, 0.3, -36.5);
-// looking slightly right of the mind keeps it clear of the hero type on the left
-const MIND_LOOK = new THREE.Vector3(2.4, 0.1, 0);
+// looking left of the mind pushes it to the right half, clear of the hero type
+const MIND_LOOK = new THREE.Vector3(-2.3, 0.1, 0);
 
 function CameraRig() {
   const { camera } = useThree();
@@ -102,7 +102,7 @@ export default function Scene() {
     <div className="scene" aria-hidden="true">
       <Canvas
         dpr={low ? [1, 1.25] : [1, 2]}
-        camera={{ fov: 55, near: 0.1, far: 120, position: [-2.8, 0.1, 9.5] }}
+        camera={{ fov: 55, near: 0.1, far: 120, position: [-1.2, 0.1, 9.5] }}
         gl={{ antialias: false, powerPreference: "high-performance", alpha: false }}
         frameloop={prefersReducedMotion ? "demand" : "always"}
         onCreated={({ gl }) => {

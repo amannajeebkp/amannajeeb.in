@@ -61,29 +61,40 @@ void main(){
                 fbm(uv * 1.1 + 2.0 * q + vec2(8.3, 2.8) + 0.126 * t));
   float f = fbm(uv * 1.1 + 2.5 * r);
 
-  vec3 col = mix(u_c3, u_c1, clamp(f * f * 3.2, 0.0, 1.0));
-  col = mix(col, u_c2, clamp(length(q) * 0.9, 0.0, 1.0));
-  float spark = pow(clamp(r.x + 0.2, 0.0, 1.0), 6.0);
-  col = mix(col, u_c4, spark * 0.35);
+  // violet/pink dominant, sky in the deep folds, yellow only where the field peaks
+  vec3 col = mix(u_c3, u_c1, clamp(f * 1.8 + 0.55, 0.0, 1.0));
+  col = mix(col, u_c2, clamp(length(q) * 1.3 - 0.25, 0.0, 1.0));
+  float spark = pow(clamp(r.x + 0.15, 0.0, 1.0), 7.0);
+  col = mix(col, u_c4, spark * 0.3);
 
-  float lum = smoothstep(0.08, 1.0, f + 0.15);
+  // mostly black: only the brighter folds carry light
+  float lum = pow(smoothstep(0.05, 0.95, f + 0.22), 1.6);
+
+  // thin bright filaments where the field folds — the aurora
+  float ribbon = pow(clamp(1.0 - abs(f - 0.1) * 7.0, 0.0, 1.0), 5.0);
 
   // torch
   float d = length(uv - m);
-  float torch = exp(-d * d * 9.0) * 0.55;
+  float torch = exp(-d * d * 7.0) * 0.5;
 
-  vec3 outc = col * (lum * 0.42 + torch * (0.5 + lum));
+  vec3 outc = col * (lum * 0.42 + torch * (0.35 + lum * 0.8));
+  outc += mix(u_c3, vec3(1.0), 0.35) * ribbon * (0.34 + torch * 0.4);
+  outc += u_c4 * spark * ribbon * 0.5;
 
   // vignette keeps the edges truly black
   float vig = smoothstep(1.35, 0.25, length(uv));
   outc *= vig;
 
-  // ignite: radial reveal from the centre, with a bright rim on the wavefront
+  // ignite: radial reveal from the centre, with a thin hot rim on the wavefront
   float R = u_ignite * 1.7;
   float edge = length(uv);
   float rev = smoothstep(R, R - 0.45, edge);
-  float rim = smoothstep(R + 0.02, R, edge) * smoothstep(R - 0.16, R, edge) * (1.0 - u_ignite);
-  outc = outc * rev + u_c4 * rim * 0.35 + col * rim * 0.6;
+  float rim = smoothstep(R + 0.012, R, edge) * smoothstep(R - 0.06, R, edge) * (1.0 - u_ignite);
+  outc = outc * rev + mix(u_c2, vec3(1.0), 0.12) * 0.95 * rim;
+
+  // saturation push so it reads as light, not grey smoke
+  float g = dot(outc, vec3(0.299, 0.587, 0.114));
+  outc = mix(vec3(g), outc, 1.5);
 
   gl_FragColor = vec4(outc * u_intensity, 1.0);
 }

@@ -47,7 +47,7 @@ export function HintPill({ show }: { show: boolean }) {
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed left-1/2 -translate-x-1/2 top-6 sm:top-auto sm:bottom-8 z-[7000] pointer-events-none"
+          className="fixed left-1/2 -translate-x-1/2 bottom-24 sm:bottom-8 z-[7000] pointer-events-none"
         >
           <div className="font-mono text-[11px] sm:text-xs text-white/70 bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-4 py-2 whitespace-nowrap">
             {isTouchDevice ? "drag the board, tap the stickers, swipe the cards" : "drag the board, click the stickers, scroll the cards"}

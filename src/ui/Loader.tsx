@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
 
 /**
  * Boot screen: a counter and a single line that charges up, then the whole
@@ -26,10 +25,9 @@ export default function Loader({ onDone }: { onDone: () => void }) {
     Promise.all([fonts, new Promise((r) => setTimeout(r, minMs))]).then(() => {
       if (!alive || !root.current) return;
       setN(100);
-      const tl = gsap.timeline({ onComplete: onDone });
-      tl.to(root.current.querySelector(".ld-line"), { scaleX: 1, duration: 0.35, ease: "power3.inOut" }, 0)
-        .to(root.current.querySelector(".ld-num"), { y: -20, opacity: 0, duration: 0.4, ease: "power3.in" }, 0.1)
-        .to(root.current, { clipPath: "inset(0 0 100% 0)", duration: 0.9, ease: "power4.inOut" }, 0.35);
+      // CSS-driven exit (not rAF) so it finishes on time even in a throttled tab
+      root.current.classList.add("out");
+      setTimeout(() => alive && onDone(), 1150);
     });
     return () => {
       alive = false;

@@ -45,7 +45,11 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
   display: grid; place-content: center; gap: 14px;
   font-family: var(--display);
   clip-path: inset(0 0 0 0);
+  transition: clip-path 0.9s cubic-bezier(0.76, 0, 0.24, 1) 0.25s;
 }
+.loader.out { clip-path: inset(0 0 100% 0); }
+.loader.out .ld-num { transform: translateY(-20px); opacity: 0; transition: transform .4s ease-in, opacity .4s ease-in; }
+.loader.out .ld-line { transform: scaleX(1) !important; transition: transform .35s ease-in-out; }
 .ld-num { font-size: clamp(56px, 10vw, 120px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
 .ld-track { width: clamp(160px, 24vw, 320px); height: 2px; background: var(--line); overflow: hidden; }
 .ld-line { height: 100%; background: var(--ink); transform-origin: left; }

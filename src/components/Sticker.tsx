@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { fxEnabled } from "../lib/fx";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, ChevronUp, RotateCcw, Maximize2, X, RefreshCw } from "lucide-react";
 import type { PointerEvent as RPointerEvent, MouseEvent as RMouseEvent } from "react";
@@ -269,11 +270,18 @@ const StickerEl: React.FC<StickerProps> = ({
       : { type: "spring" as const, stiffness: 600, damping: 30, mass: 1 },
   };
 
-  const nameLower = s.name?.toLowerCase() || "";
-  const hoverScale =
-    !isEditing && (nameLower.includes("dog") || nameLower.includes("airpod"))
-      ? "hover:scale-105"
-      : "";
+  // idle float: each sticker breathes on its own rhythm (seeded by id, stable across renders)
+  const floatStyle = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < s.id.length; i++) h = (h * 31 + s.id.charCodeAt(i)) >>> 0;
+    const dur = 5 + (h % 400) / 100;           // 5–9s
+    const delay = -((h >> 4) % 700) / 100;     // negative: start mid-cycle
+    return { animationDuration: `${dur}s`, animationDelay: `${delay}s` };
+  }, [s.id]);
+  const floating = fxEnabled && !isEditing && !dragging;
+  const hoverFx = !isEditing
+    ? "group-hover:scale-[1.06] group-hover:[filter:drop-shadow(0_0_18px_rgba(255,255,255,0.38))_drop-shadow(0_10px_24px_rgba(0,0,0,0.6))]"
+    : "";
 
   return (
     <>
@@ -298,7 +306,7 @@ const StickerEl: React.FC<StickerProps> = ({
         whileTap={!isEditing && !dragging ? { scale: 0.95 } : undefined}
         onMouseEnter={() => !isEditing && onHover(true)}
         onMouseLeave={() => !isEditing && onHover(false)}
-        className={`sticker-element absolute top-0 left-0 touch-none pointer-events-auto ${
+        className={`sticker-element group absolute top-0 left-0 touch-none pointer-events-auto ${
           isSelected ? "z-[150]" : ""
         } ${isEditing ? (dragging ? "cursor-grabbing" : "cursor-grab") : "cursor-pointer"}`}
         style={{
@@ -318,10 +326,11 @@ const StickerEl: React.FC<StickerProps> = ({
             }
           }}
         >
+          <div className={floating ? "nj-float" : ""} style={floating ? floatStyle : undefined}>
           <img
             src={s.url}
-            alt="sticker"
-            className={`select-none pointer-events-none transition-transform ${hoverScale}`}
+            alt={s.name || "sticker"}
+            className={`select-none pointer-events-none transition-[transform,filter] duration-300 ease-out ${hoverFx}`}
             draggable={false}
             style={{
               width: "100%",
@@ -337,6 +346,7 @@ const StickerEl: React.FC<StickerProps> = ({
                 : undefined,
             }}
           />
+          </div>
 
           {isEditing && isSelected && (
             <>

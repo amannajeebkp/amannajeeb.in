@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
+import { motion, useSpring, useTransform } from "framer-motion";
 import { toast, Toaster } from "sonner";
+import Nebula from "./components/Nebula";
+import Cursor from "./components/Cursor";
+import Sparks from "./components/Sparks";
+import { Grain, HintPill, StatusStrip, useEasterEggs } from "./components/Ambient";
+import { fxEnabled, installPointerTracking, isTouchDevice, pointerX, pointerY } from "./lib/fx";
 import IntroSequence from "./components/IntroSequence";
 import SlideDeck from "./components/SlideDeck";
 import SlideContent from "./components/SlideContent";
@@ -9,7 +15,7 @@ import StickerLayer from "./components/StickerLayer";
 import ThumbsUpPopup, { DEFAULT_THUMB_URL } from "./components/ThumbsUpPopup";
 import EmailModal from "./components/EmailModal";
 import CalendlyModal from "./components/CalendlyModal";
-import { installClickListener, preloadClickSounds } from "./lib/sound";
+import { installClickListener, playSynth, preloadClickSounds, presets } from "./lib/sound";
 import { track } from "./lib/track";
 import {
   loadHotTakes,
@@ -110,6 +116,17 @@ const App: React.FC = () => {
 
   useEffect(() => preloadClickSounds(), []);
   useEffect(() => installClickListener(), []);
+  useEffect(() => installPointerTracking(), []);
+  useEasterEggs();
+
+  // the deck leans toward the pointer (desktop only; the board is 3D, not a flat card)
+  const tiltEnabled = fxEnabled && !isTouchDevice;
+  const tiltX = useSpring(useTransform(pointerY, (v) => (tiltEnabled ? v * 4.5 : 0)), { stiffness: 60, damping: 18 });
+  const tiltY = useSpring(useTransform(pointerX, (v) => (tiltEnabled ? v * 5.5 : 0)), { stiffness: 60, damping: 18 });
+
+  const whoosh = useCallback(() => {
+    if (fxEnabled) playSynth({ ...presets.space, frequency: 320, decay: 0.22, volume: 0.07, pitchDrop: 140, noiseMix: 0.35 });
+  }, []);
 
   // data loading (mirrors original cache-first flow)
   useEffect(() => {
@@ -283,6 +300,7 @@ const App: React.FC = () => {
             setSlideIndex((i) => i + 1);
             setActiveThumbsUpStack([]);
             wheelCooldown.current = now;
+            whoosh();
           }
         } else if (dy < -WHEEL_NAV_THRESHOLD) {
           if (slidesData.length > 0 && slideIndex > 0) {
@@ -290,6 +308,7 @@ const App: React.FC = () => {
             setSlideIndex((i) => i - 1);
             setActiveThumbsUpStack([]);
             wheelCooldown.current = now;
+            whoosh();
           }
         }
       },
@@ -327,16 +346,19 @@ const App: React.FC = () => {
     setDirection(1);
     setSlideIndex((i) => i + 1);
     setActiveThumbsUpStack([]);
+    whoosh();
   };
   const goPrev = () => {
     setDirection(-1);
     setSlideIndex((i) => i - 1);
     setActiveThumbsUpStack([]);
+    whoosh();
   };
   const goHome = () => {
     setDirection(-1);
     setSlideIndex(0);
     setActiveThumbsUpStack([]);
+    whoosh();
   };
 
   const navNode = (className: string) => (
@@ -350,9 +372,20 @@ const App: React.FC = () => {
     />
   );
 
+  // ambient layers live outside the intro/board switch so they never restart
+  const ambient = (
+    <>
+      <Nebula ignited={!showLoader} intensity={showLoader ? 0.75 : 1} />
+      <Grain />
+      <Sparks enabled={!isEditMode} />
+      <Cursor enabled={!isEditMode} />
+    </>
+  );
+
   if (showLoader) {
     return (
       <>
+        {ambient}
         <IntroSequence onComplete={() => setTimeout(() => setBooted(true), 500)} />
         <Toaster theme="dark" position="bottom-right" />
       </>
@@ -362,18 +395,21 @@ const App: React.FC = () => {
   return (
     <div
       ref={worldRef}
-      className={`fixed inset-0 h-[100dvh] w-full flex items-center justify-center bg-black overflow-hidden overscroll-none text-white font-mono touch-none ${
+      className={`fixed inset-0 h-[100dvh] w-full flex items-center justify-center overflow-hidden overscroll-none text-white font-mono touch-none ${
         draggingCanvas ? "cursor-grabbing" : "cursor-grab"
       } [&_button]:cursor-pointer [&_a]:cursor-pointer`}
       style={{
         backgroundImage: `
-          linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)
+          linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)
         `,
         backgroundSize: `${Math.max(20, 40 * zoom)}px ${Math.max(20, 40 * zoom)}px`,
         backgroundPosition: `calc(50% + ${pan.x}px) calc(50% + ${pan.y}px)`,
       }}
     >
+      {ambient}
+      {!isEditMode && <StatusStrip name="Aman Najeeb" role="AI engineer" />}
+      <HintPill show={!isEditMode} />
       {navNode("fixed bottom-8 left-1/2 -translate-x-1/2 z-[300] sm:hidden")}
 
 
@@ -459,6 +495,7 @@ const App: React.FC = () => {
         </div>
       )}
 
+      <div className={`absolute inset-0 ${fxEnabled ? "nj-bloom" : ""}`}>
       <div
         className={`absolute left-1/2 top-1/2 w-[672px] h-[504px] min-w-[672px] min-h-[504px] flex-shrink-0 origin-center ${
           draggingCanvas ? "" : "transition-transform duration-300 ease-out"
@@ -487,9 +524,12 @@ const App: React.FC = () => {
             />
             {navNode("hidden sm:flex absolute top-8 right-8 z-[300]")}
             {total > 0 ? (
-              <div className="pointer-events-auto w-[672px] h-[504px] min-w-[672px] min-h-[504px] flex-shrink-0">
+              <motion.div
+                className="pointer-events-auto w-[672px] h-[504px] min-w-[672px] min-h-[504px] flex-shrink-0"
+                style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 1400, transformStyle: "preserve-3d" }}
+              >
                 <SlideDeck items={deckItems} currentIndex={slideIndex} direction={direction} />
-              </div>
+              </motion.div>
             ) : (
               <div className="text-white text-center p-8 border border-white/20 rounded-xl bg-black/50 backdrop-blur-sm pointer-events-auto">
                 <p>No slides found.</p>
@@ -497,6 +537,7 @@ const App: React.FC = () => {
             )}
           </div>
         </main>
+      </div>
       </div>
 
       <Toaster

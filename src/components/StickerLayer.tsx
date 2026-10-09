@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useSpring, useTransform } from "framer-motion";
+import { fxEnabled, isTouchDevice, pointerX, pointerY } from "../lib/fx";
 import { toast } from "sonner";
 import StickerEl from "./Sticker";
 import LegoRain from "./LegoRain";
@@ -80,6 +81,24 @@ const StickerLayer: React.FC<{
   const [legoRaining, setLegoRaining] = useState(false);
 
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  // depth: the back layer drifts against the pointer, the front layer with it
+  const parallaxOn = fxEnabled && !isTouchDevice && !isEditMode;
+  const springCfg = { stiffness: 40, damping: 16, mass: 1.2 };
+  const backX = useSpring(useTransform(pointerX, (v) => (parallaxOn ? v * -14 : 0)), springCfg);
+  const backY = useSpring(useTransform(pointerY, (v) => (parallaxOn ? v * 10 : 0)), springCfg);
+  const frontX = useSpring(useTransform(pointerX, (v) => (parallaxOn ? v * 16 : 0)), springCfg);
+  const frontY = useSpring(useTransform(pointerY, (v) => (parallaxOn ? v * -12 : 0)), springCfg);
+
+  // Konami code (see Ambient.tsx) → Lego rain
+  useEffect(() => {
+    const onLego = () => {
+      setLegoRaining(true);
+      setTimeout(() => setLegoRaining(false), 6000);
+    };
+    window.addEventListener("nj:lego", onLego);
+    return () => window.removeEventListener("nj:lego", onLego);
+  }, []);
 
 
   const audioRefs = {
@@ -227,7 +246,14 @@ const StickerLayer: React.FC<{
       list = list.map((p) => ({ ...p, layer: p.layer || "front", image_x: undefined, image_y: undefined, image_width: undefined, height: null }));
       if (cancelled) return;
       setStickers(list);
-      list.forEach((s, i) => {
+      // reveal from the centre outward so the board "scatters" into place
+      const cx = CANVAS_W / 2, cy = (CANVAS_W * 0.75) / 2;
+      const rank = new Map(
+        [...list]
+          .sort((a, b) => Math.hypot(a.x - cx, a.y - cy) - Math.hypot(b.x - cx, b.y - cy))
+          .map((s, i) => [s.id, i] as const),
+      );
+      list.forEach((s) => {
         const img = new Image();
         const reveal = () => {
           const t = setTimeout(() => {
@@ -236,7 +262,7 @@ const StickerLayer: React.FC<{
               next.add(s.id);
               return next;
             });
-          }, i * 50);
+          }, (fxEnabled ? 350 : 0) + (rank.get(s.id) ?? 0) * 55);
           timers.push(t);
         };
         img.onload = reveal;
@@ -930,26 +956,30 @@ const StickerLayer: React.FC<{
   return (
     <div ref={canvasRef} className="absolute inset-0 pointer-events-none">
       {/* back layer */}
-      <div
+      <motion.div
         className="absolute top-0 left-0 z-0 pointer-events-none overflow-visible origin-top-left"
         style={{
           width: CANVAS_W,
           height: CANVAS_W * 0.75,
+          x: backX,
+          y: backY,
         }}
       >
         {backStickers.map((s) => renderSticker(s, false))}
-      </div>
+      </motion.div>
 
       {/* front layer */}
-      <div
+      <motion.div
         className="absolute top-0 left-0 z-[200] pointer-events-none overflow-visible origin-top-left"
         style={{
           width: CANVAS_W,
           height: CANVAS_W * 0.75,
+          x: frontX,
+          y: frontY,
         }}
       >
         {frontStickers.map((s) => renderSticker(s, true))}
-      </div>
+      </motion.div>
 
       {legoRaining && <LegoRain />}
 

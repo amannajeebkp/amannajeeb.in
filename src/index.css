@@ -119,3 +119,72 @@ html, body {
     padding: 1rem !important;
   }
 }
+
+/* ---------- ambient effects ---------- */
+
+/* custom cursor active: hide the native one everywhere but form fields */
+html.nj-cursor,
+html.nj-cursor * {
+  cursor: none !important;
+}
+html.nj-cursor input,
+html.nj-cursor textarea {
+  cursor: text !important;
+}
+
+/* film grain: animated SVG noise, very faint */
+.nj-grain {
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  animation: nj-grain-shift 0.6s steps(3) infinite;
+  mix-blend-mode: screen;
+}
+@keyframes nj-grain-shift {
+  0% { background-position: 0 0; }
+  33% { background-position: -70px 40px; }
+  66% { background-position: 45px -60px; }
+  100% { background-position: 0 0; }
+}
+
+/* idle float on stickers; duration/delay set per sticker inline */
+.nj-float {
+  animation-name: nj-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes nj-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -5px, 0) rotate(0.6deg); }
+}
+
+/* the board blooms in after the intro hands over */
+.nj-bloom {
+  animation: nj-bloom 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes nj-bloom {
+  from { opacity: 0; transform: scale(0.9); filter: blur(14px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* intro progress line */
+.nj-intro-bar {
+  transform: scaleX(0);
+  animation: nj-intro-bar 5.1s linear forwards;
+}
+@keyframes nj-intro-bar {
+  to { transform: scaleX(1); }
+}
+
+/* keyboard users still get a clear focus ring */
+:focus-visible {
+  outline: 2px solid #f1ff29;
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nj-grain, .nj-float, .nj-bloom, .nj-intro-bar { animation: none !important; }
+  .nj-bloom { opacity: 1; transform: none; filter: none; }
+}

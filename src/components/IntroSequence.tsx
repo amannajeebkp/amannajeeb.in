@@ -78,7 +78,11 @@ const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
   if (done) return null;
 
   return (
-    <div className="fixed inset-0 h-[100dvh] w-full flex items-center justify-center bg-black overflow-hidden">
+    <div className="fixed inset-0 h-[100dvh] w-full flex items-center justify-center bg-black/55 overflow-hidden z-[5]">
+      {/* progress line: the intro has a known length, so show it */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-white/5">
+        <div className="nj-intro-bar h-full bg-[#f1ff29]/80 origin-left" />
+      </div>
       <div
         className="absolute inset-0 pointer-events-none opacity-10"
         style={{
@@ -118,7 +122,7 @@ const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
         />
       </div>
 
-      <div className="absolute bottom-8 text-white/20 text-xs font-mono animate-pulse z-10">
+      <div className="absolute bottom-8 text-white/25 text-[11px] font-mono z-10 tracking-wide">
         click or press any key to skip
       </div>
     </div>

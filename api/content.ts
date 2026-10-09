@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { cors, getJson, isAdmin, readBody, rejectUnauthorized, setJson, upstash } from "./_lib";
+import { cors, getJson, isAdmin, readBody, rejectUnauthorized, setJson, upstash } from "./_lib.js";
 
 export const config = { runtime: "nodejs" };
 
